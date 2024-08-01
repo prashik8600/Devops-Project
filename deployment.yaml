@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment    #deployment 
+metadata:
+  name: monitoringapp  #give any name of your project 
+  namespace: default     #create your own namespace 
+  labels:
+    role: monitoringapp
+    env: demo
+spec:
+  replicas: 2            #replicas for scaling up or down
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25% 
+  selector:
+    matchLabels:
+      role: monitoringapp
+  template:
+    metadata:
+      labels:
+        role: monitoringapp
+    spec:
+      containers:
+        - name: monitoringapp
+          image: prashw23/monitoringapp1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4499   #if not available add in Security group 
+          # volumeMounts:
+          #   - name: tls-certs
+          #     mountPath: /etc/tls
+          #     readOnly: true
+          # env:
+          #   - name: TLS_CERT_FILE
+          #     value: /etc/tls/wisecow.crt
+          #   - name: TLS_KEY_FILE
+          #     value: /etc/tls/wisecow.key
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4499
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4499
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+      # volumes:
+      #   - name: tls-certs
+      #     secret:
+      #       secretName: wisecow-tls
