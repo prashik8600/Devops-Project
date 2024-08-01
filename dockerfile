@@ -8,7 +8,7 @@ RUN pip3 install --no-cache-dir -r requirement.txt
 
 COPY . .
 
-ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_HOST=34.230.82.219
 
 EXPOSE 5000
 
